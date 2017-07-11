@@ -6,7 +6,7 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
-// defines starting point at bottom center
+// defines starting point of ball at bottom center
 var x = canvas.width / 2;
 var y = canvas.height - 30;
 
@@ -23,10 +23,11 @@ var ballColor = "#0e36bd";
 // paddle width, height, and starting point X axis
 var paddleHeight = 10;
 var paddleWidth = 75;
-var paddleStartX = (canvas.width - paddleWidth) / 2;
+var paddleX = (canvas.width-paddleWidth) / 2;
 
-// paddle color
+// paddle color and speed it moves
 var paddleColor = "#25d8b9";
+var paddleSpeed = 7;
 
 // left and right arrow button variables
 var rightPressed = false;
@@ -63,7 +64,7 @@ function drawBall() {
  */
 function drawPaddle() {
     ctx.beginPath();
-    ctx.rect(paddleStartX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
     ctx.fillStyle = paddleColor;
     ctx.fill();
     ctx.closePath();
@@ -81,8 +82,7 @@ document.addEventListener("keyup", keyUpHandler, false);
 function keyDownHandler(e) {
     if (e.keyCode == 39) {
         rightPressed = true;
-    }
-    else if (e.keyCode == 37) {
+    } else if (e.keyCode == 37) {
         leftPressed = true;
     }
 }
@@ -95,8 +95,7 @@ function keyDownHandler(e) {
 function keyUpHandler(e) {
     if (e.keyCode == 39) {
         rightPressed = false;
-    }
-    else if (e.keyCode == 37) {
+    } else if (e.keyCode == 37) {
         leftPressed = false;
     }
 }
@@ -108,14 +107,25 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     drawPaddle();
+
     x += dx;
     y += dy;
 
     // first condition = top wall, second condition = bottom wall
     // sets ball to random color when hitting a wall
-    if (y + dy < ballRadius || y + dy > canvas.height - ballRadius) {
+    // when second condition is hit, meaning the ball hits the bottom wall,
+    // it checks if it hit the paddle, and if its not within bounds of paddle width,
+    // alerts game over
+    if (y + dy < ballRadius) {
         dy = -dy;
         ballColor = getRandomColor();
+    } else if (y + dy > canvas.height - ballRadius) {
+        if (x > paddleX && x < paddleX + paddleWidth) {
+            dy = -dy;
+        } else {
+            alert("GAME OVER");
+            document.location.reload();
+        }
     }
 
     // first condition = left wall, second condition = right wall
@@ -128,10 +138,9 @@ function draw() {
     // if user tries to go out of bounds on right wall, this will prevent it
     // also if user tries to go out of bounds on left wall, will also prevent it
     if (rightPressed && paddleX < canvas.width - paddleWidth) {
-        paddleX += 7;
-    }
-    else if (leftPressed && paddleX > 0) {
-        paddleX -= 7;
+        paddleX += paddleSpeed;
+    } else if (leftPressed && paddleX > 0) {
+        paddleX -= paddleSpeed;
     }
 }
 
