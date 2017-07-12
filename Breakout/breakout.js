@@ -48,6 +48,9 @@ var leftPressed = false;
 // tracking the score
 var score = 0;
 
+// tracking player lives
+var lives = 3;
+
 /**
  * Produces a random color with RGB, and is set to have to a higher chance of
  * lighter colors.
@@ -128,6 +131,7 @@ function drawBricks() {
 // event listeners
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 /**
  * Handles the action when a key is pressed down.
@@ -152,6 +156,18 @@ function keyUpHandler(e) {
         rightPressed = false;
     } else if (e.keyCode == 37) {
         leftPressed = false;
+    }
+}
+
+/**
+ * Handles the mouse movement.
+ *
+ * @param e
+ */
+function mouseMoveHandler(e) {
+    var relativeX = e.clientX - canvas.offsetLeft;
+    if (relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth / 2;
     }
 }
 
@@ -197,6 +213,12 @@ function drawScore() {
     ctx.fillText("Score " + score, 8, 20);
 }
 
+function drawLives() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#dd40ce";
+    ctx.fillText("Lives: " + lives, canvas.width - 65, 20);
+}
+
 /**
  * clearRect(x1, y1, x2, y2) clears specified area of a rectangle
  */
@@ -206,6 +228,7 @@ function draw() {
     drawBall();
     drawPaddle();
     drawScore();
+    drawLives();
     collisionDetection();
 
     x += dx;
@@ -215,7 +238,7 @@ function draw() {
     // sets ball to random color when hitting a wall
     // when second condition is hit, meaning the ball hits the bottom wall,
     // it checks if it hit the paddle, and if its not within bounds of paddle width,
-    // alerts game over
+    // alerts game over if all the lives are gone
     if (y + dy < ballRadius) {
         dy = -dy;
         ballColor = getRandomColor();
@@ -223,8 +246,17 @@ function draw() {
         if (x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
         } else {
-            alert("GAME OVER");
-            document.location.reload();
+            lives--;
+            if (!lives) {
+                alert("GAME OVER");
+                document.location.reload();
+            } else {
+                x = canvas.width / 2;
+                y = canvas.height- 30;
+                dx = 2;
+                dy = -2;
+                paddleX = (canvas.width - paddleWidth) / 2;
+            }
         }
     }
 
@@ -242,7 +274,10 @@ function draw() {
     } else if (leftPressed && paddleX > 0) {
         paddleX -= paddleSpeed;
     }
+
+    requestAnimationFrame(draw);
 }
 
-// runs function over and over again
-setInterval(draw, 10);
+// runs function over and over again using requestAnimationFrame(), which lets browser
+// render the framerates and shapes when needed
+draw();
