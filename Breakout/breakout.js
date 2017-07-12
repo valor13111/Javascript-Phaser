@@ -45,6 +45,9 @@ createBricks2dArray();
 var rightPressed = false;
 var leftPressed = false;
 
+// tracking the score
+var score = 0;
+
 /**
  * Produces a random color with RGB, and is set to have to a higher chance of
  * lighter colors.
@@ -160,6 +163,9 @@ function keyUpHandler(e) {
  * The x position of the ball is less than the x position of the brick plus its width.
  * The y position of the ball is greater than the y position of the brick.
  * The y position of the ball is less than the y position of the brick plus its height.
+ *
+ * If the score is equal to the number of bricks in the game, it will alert a
+ * congratulations message, and start the game over.
  */
 function collisionDetection() {
     for (column = 0; column < brickColumnCount; column++) {
@@ -169,10 +175,26 @@ function collisionDetection() {
                 if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                     dy = -dy;
                     b.status = 0;
+                    score++;
+                    if (score == brickRowCount * brickColumnCount) {
+                        alert("YOU WIN, CONGRATS!");
+                        document.location.reload();
+                    }
                 }
             }
         }
     }
+}
+
+/**
+ * Draws the scoreboard for the game.
+ *
+ * Adds a point for every brick destroyed in the function collisionDetection().
+ */
+function drawScore() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#004465";
+    ctx.fillText("Score " + score, 8, 20);
 }
 
 /**
@@ -183,6 +205,7 @@ function draw() {
     drawBricks();
     drawBall();
     drawPaddle();
+    drawScore();
     collisionDetection();
 
     x += dx;
