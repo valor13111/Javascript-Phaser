@@ -29,6 +29,18 @@ var paddleX = (canvas.width-paddleWidth) / 2;
 var paddleColor = "#25d8b9";
 var paddleSpeed = 7;
 
+// bricks
+var brickRowCount = 3;
+var brickColumnCount = 5;
+var brickWidth = 75;
+var brickHeight = 25;
+var brickPadding = 10;
+var brickOffsetTop = 32;
+var brickOffsetLeft = 32;
+var brickColor = "#f65c0c";
+var bricks = [];
+createBricks2dArray();
+
 // left and right arrow button variables
 var rightPressed = false;
 var leftPressed = false;
@@ -70,6 +82,46 @@ function drawPaddle() {
     ctx.closePath();
 }
 
+/**
+ * Draws the bricks (enemies) onto the canvas.
+ * Each brick is given an x, y, and status component.
+ * Status means if it is a 1, then draw the brick, else, don't.
+ */
+function createBricks2dArray() {
+    for (column = 0; column < brickColumnCount; column++) {
+        bricks[column] = [];
+        for (row = 0; row < brickRowCount; row++) {
+            bricks[column][row] = {
+                x: 0,
+                y: 0,
+                status: 1
+            };
+        }
+    }
+}
+
+/**
+ * Draws the bricks onto the screen if the status of the brick is a 1.
+ */
+function drawBricks() {
+    for (column = 0; column < brickColumnCount; column++) {
+        for (row = 0; row < brickRowCount; row++) {
+            if (bricks[column][row].status == 1) {
+                var brickX = (column * (brickWidth + brickPadding)) + brickOffsetLeft;
+                var brickY = (row * (brickHeight + brickPadding)) + brickOffsetTop;
+                bricks[column][row].x = brickX;
+                bricks[column][row].y = brickY;
+
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = brickColor;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}
+
 // event listeners
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -101,12 +153,37 @@ function keyUpHandler(e) {
 }
 
 /**
+ * Collision detection for when the center of the ball hits a brick.
+ *
+ * These conditions must be met:
+ * The x position of the ball is greater than the x position of the brick.
+ * The x position of the ball is less than the x position of the brick plus its width.
+ * The y position of the ball is greater than the y position of the brick.
+ * The y position of the ball is less than the y position of the brick plus its height.
+ */
+function collisionDetection() {
+    for (column = 0; column < brickColumnCount; column++) {
+        for (row = 0; row < brickRowCount; row++) {
+            var b = bricks[column][row];
+            if (b.status == 1) {
+                if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                    dy = -dy;
+                    b.status = 0;
+                }
+            }
+        }
+    }
+}
+
+/**
  * clearRect(x1, y1, x2, y2) clears specified area of a rectangle
  */
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
     drawBall();
     drawPaddle();
+    collisionDetection();
 
     x += dx;
     y += dy;
