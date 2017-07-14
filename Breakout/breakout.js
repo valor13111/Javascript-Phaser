@@ -49,7 +49,7 @@ var leftPressed = false;
 var score = 0;
 
 // tracking player lives
-var lives = 3;
+var lives = 1;
 
 /**
  * Produces a random color with RGB, and is set to have to a higher chance of
@@ -192,7 +192,9 @@ function collisionDetection() {
                     dy = -dy;
                     b.status = 0;
                     score++;
+                    playAudio('block_destroy.wav');
                     if (score == brickRowCount * brickColumnCount) {
+                        playAudio('winner.wave');
                         alert("YOU WIN, CONGRATS!");
                         document.location.reload();
                     }
@@ -248,8 +250,10 @@ function draw() {
         } else {
             lives--;
             if (!lives) {
-                alert("GAME OVER");
-                document.location.reload();
+                stopMusic();
+                playAudio('lost.wav');
+                //alert("GAME OVER");
+                //document.location.reload();
             } else {
                 x = canvas.width / 2;
                 y = canvas.height- 30;
@@ -280,4 +284,7 @@ function draw() {
 
 // runs function over and over again using requestAnimationFrame(), which lets browser
 // render the framerates and shapes when needed
-draw();
+function startGame() {
+    playMusic();
+    draw();
+}
