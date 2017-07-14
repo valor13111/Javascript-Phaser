@@ -7,11 +7,22 @@
 </head>
 <body>
 
-<canvas id="myCanvas" width="480" height="320"></canvas>
+<audio id="audiotag" src="assets/sound/AllOfUs.mp3" preload="auto"></audio>
+
+<div class="container">
+    <canvas id="myCanvas" width="480" height="320">
+    </canvas>
+    <div id="main">
+        <button id="start" onclick="startGame()">Start</button>
+        <button id="exit">Exit</button>
+    </div>
+</div>
+
 
 </body>
 
 <footer>
+    <script type="text/javascript" src="audio.js"></script>
     <script type="text/javascript" src="breakout.js"></script>
 </footer>
 </html>
