@@ -5,14 +5,15 @@
  * and assigning it to the game variable.
  */
 
-var myCanvas = document.getElementById("myCanvas");
-var game = new Phaser.Game(480, 320, Phaser.AUTO, 'myCanvas', {
+var game = new Phaser.Game(480, 320, Phaser.AUTO, null, {
     preload: preload,
     create: create,
     update: update
 });
 
 var ball;
+var velocityX = 150;
+var velocityY = 150;
 
 /**
  * Takes care of preloading the assets.
@@ -32,13 +33,18 @@ function preload() {
  * Executed once when everything is loaded and ready.
  */
 function create() {
+    // initializes arcade physics engine
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
     ball = game.add.sprite(50, 50, 'ball');
+
+    // enables the ball for physics system, which isn't enabled by default
+    game.physics.enable(ball, Phaser.Physics.ARCADE);
+    ball.body.velocity.set(velocityX, velocityY);
 }
 
 /**
  * Executed on every frame.
  */
 function update() {
-    ball.x += 1;
-    ball.y += 1;
 }
