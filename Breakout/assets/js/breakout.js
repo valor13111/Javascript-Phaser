@@ -7,8 +7,8 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 // defines starting point of ball at bottom center
-var x = canvas.width / 2;
-var y = canvas.height - 30;
+var ballPositionX = canvas.width / 2;
+var ballPositionY = canvas.height - 30;
 
 // values to be added to every frame
 var dx = 2;
@@ -71,7 +71,7 @@ function getRandomColor() {
  */
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    ctx.arc(ballPositionX, ballPositionY, ballRadius, 0, Math.PI*2);
     ctx.fillStyle = ballColor;
     ctx.fill();
     ctx.closePath();
@@ -90,7 +90,7 @@ function drawPaddle() {
 
 /**
  * Draws the bricks (enemies) onto the canvas.
- * Each brick is given an x, y, and status component.
+ * Each brick is given an ballPositionX, ballPositionY, and status component.
  * Status means if it is a 1, then draw the brick, else, don't.
  */
 function createBricks2dArray() {
@@ -175,10 +175,10 @@ function mouseMoveHandler(e) {
  * Collision detection for when the center of the ball hits a brick.
  *
  * These conditions must be met:
- * The x position of the ball is greater than the x position of the brick.
- * The x position of the ball is less than the x position of the brick plus its width.
- * The y position of the ball is greater than the y position of the brick.
- * The y position of the ball is less than the y position of the brick plus its height.
+ * The ballPositionX position of the ball is greater than the ballPositionX position of the brick.
+ * The ballPositionX position of the ball is less than the ballPositionX position of the brick plus its width.
+ * The ballPositionY position of the ball is greater than the ballPositionY position of the brick.
+ * The ballPositionY position of the ball is less than the ballPositionY position of the brick plus its height.
  *
  * If the score is equal to the number of bricks in the game, it will alert a
  * congratulations message, and start the game over.
@@ -188,7 +188,7 @@ function collisionDetection() {
         for (row = 0; row < brickRowCount; row++) {
             var b = bricks[column][row];
             if (b.status == 1) {
-                if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                if (ballPositionX > b.x - ballRadius && ballPositionX < b.x + brickWidth + ballRadius && ballPositionY > b.y && ballPositionY < b.y + brickHeight + ballRadius) {
                     dy = -dy;
                     b.status = 0;
                     score++;
@@ -233,19 +233,19 @@ function draw() {
     drawLives();
     collisionDetection();
 
-    x += dx;
-    y += dy;
+    ballPositionX += dx;
+    ballPositionY += dy;
 
     // first condition = top wall, second condition = bottom wall
     // sets ball to random color when hitting a wall
     // when second condition is hit, meaning the ball hits the bottom wall,
     // it checks if it hit the paddle, and if its not within bounds of paddle width,
     // alerts game over if all the lives are gone
-    if (y + dy < ballRadius) {
+    if (ballPositionY + dy < ballRadius) {
         dy = -dy;
         ballColor = getRandomColor();
-    } else if (y + dy > canvas.height - ballRadius) {
-        if (x > paddleX && x < paddleX + paddleWidth) {
+    } else if (ballPositionY + dy > canvas.height - ballRadius) {
+        if (ballPositionX > paddleX && ballPositionX < paddleX + paddleWidth) {
             dy = -dy;
         } else {
             lives--;
@@ -255,8 +255,8 @@ function draw() {
                 //alert("GAME OVER");
                 //document.location.reload();
             } else {
-                x = canvas.width / 2;
-                y = canvas.height- 30;
+                ballPositionX = canvas.width / 2;
+                ballPositionY = canvas.height- 30;
                 dx = 2;
                 dy = -2;
                 paddleX = (canvas.width - paddleWidth) / 2;
@@ -266,7 +266,7 @@ function draw() {
 
     // first condition = left wall, second condition = right wall
     // sets ball to random color when hitting a wall
-    if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
+    if (ballPositionX + dx < ballRadius || ballPositionX + dx > canvas.width - ballRadius) {
         dx = -dx;
         ballColor = getRandomColor();
     }
