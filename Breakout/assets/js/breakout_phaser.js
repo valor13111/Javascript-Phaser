@@ -5,13 +5,14 @@
  * and assigning it to the game variable.
  */
 
-// Parameters: width, height, rendering method, id of canvas if one already exists,
-// and names of three functions that load and start the game, and update game loop on every frame
-var game = new Phaser.Game(480, 320, Phaser.AUTO, null, {
+var myCanvas = document.getElementById("myCanvas");
+var game = new Phaser.Game(480, 320, Phaser.AUTO, 'myCanvas', {
     preload: preload,
     create: create,
     update: update
 });
+
+var ball;
 
 /**
  * Takes care of preloading the assets.
@@ -22,18 +23,22 @@ function preload() {
     game.scale.pageAlignHorizontally = true;
 
     game.stage.backgroundColor = "#98ee97";
+
+    // give name to the image
+    game.load.image('ball', 'assets/images/ball.png');
 }
 
 /**
  * Executed once when everything is loaded and ready.
  */
 function create() {
-
+    ball = game.add.sprite(50, 50, 'ball');
 }
 
 /**
  * Executed on every frame.
  */
 function update() {
-
+    ball.x += 1;
+    ball.y += 1;
 }
