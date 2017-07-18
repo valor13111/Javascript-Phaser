@@ -5,7 +5,7 @@
  * and assigning it to the game variable.
  */
 
-var game = new Phaser.Game(480, 320, Phaser.AUTO, null, {
+var game = new Phaser.Game(800, 600, Phaser.AUTO, null, {
     preload: preload,
     create: create,
     update: update
@@ -25,10 +25,10 @@ var newBrick;
 var brickInfo;
 var brickWidth = 50;
 var brickHeight = 20;
-var brickRows = 7;
-var brickColumns = 3;
+var brickRows = 12;
+var brickColumns = 5;
 var brickOffsetTop = 50;
-var brickOffsetLeft = 60;
+var brickOffsetLeft = 65;
 var brickPadding = 10;
 
 // score variables
@@ -51,10 +51,11 @@ var playing = false;
 var startButton;
 
 /**
- * Takes care of preloading the assets.
+ * Takes care of preloading the assets.  NO_SCALE sets to default size, whereas
+ * SHOW_ALL will show the game area while maintaining the original aspect ratio of the screen.
  */
 function preload() {
-    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
     game.scale.pageAlignVertically = true;
     game.scale.pageAlignHorizontally = true;
 
