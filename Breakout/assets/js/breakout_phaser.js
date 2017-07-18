@@ -149,4 +149,16 @@ function ballHitBrick(ball, brick) {
     brick.kill();
     score += scoreIncrement;
     scoreText.setText('Points: ' + score);
+
+    var bricks_alive = 0;
+    for (i = 0; i < bricks.children.length; i++) {
+        if (bricks.children[i].alive == true) {
+            bricks_alive++;
+        }
+    }
+
+    if (bricks_alive == 0) {
+        alert('You won!  Congratulations!');
+        location.reload();
+    }
 }
