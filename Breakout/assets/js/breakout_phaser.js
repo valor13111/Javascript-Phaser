@@ -31,6 +31,11 @@ var brickOffsetTop = 50;
 var brickOffsetLeft = 60;
 var brickPadding = 10;
 
+// score variables
+var scoreText;
+var score = 0;
+var scoreIncrement = 10;
+
 /**
  * Takes care of preloading the assets.
  */
@@ -64,6 +69,10 @@ function create() {
     paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 5, 'paddle');
     paddle.anchor.set(0.5, 1);
 
+    scoreText = game.add.text(5, 5, 'Points: 0', {
+        font: '18px Arial',
+        fill: '#69a5e4'
+    });
     // enables the ball for physics system, which isn't enabled by default
     // set the velocity of the ball
     // allow for ball to collide with edges of the canvas, and set it to bounce off walls
@@ -131,11 +140,13 @@ function initBricks() {
 }
 
 /**
- * Destroys the brick once hit with the ball.
+ * Destroys the brick once hit with the ball, and updates the score.
  *
  * @param ball - ball object
  * @param brick - brick object
  */
 function ballHitBrick(ball, brick) {
     brick.kill();
+    score += scoreIncrement;
+    scoreText.setText('Points: ' + score);
 }
