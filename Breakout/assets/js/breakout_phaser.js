@@ -19,6 +19,18 @@ var paddle;
 var velocityX = 150;
 var velocityY = -150;
 
+// brick variables
+var bricks;
+var newBrick;
+var brickInfo;
+var brickWidth = 50;
+var brickHeight = 20;
+var brickRows = 7;
+var brickColumns = 3;
+var brickOffsetTop = 50;
+var brickOffsetLeft = 60;
+var brickPadding = 10;
+
 /**
  * Takes care of preloading the assets.
  */
@@ -32,6 +44,7 @@ function preload() {
     // gives name to the images
     game.load.image('ball', 'assets/images/ball.png');
     game.load.image('paddle', 'assets/images/paddle.png');
+    game.load.image('brick', 'assets/images/brick.png');
 }
 
 /**
@@ -70,6 +83,8 @@ function create() {
         alert('Game Over!');
         location.reload();
     }, this);
+
+    initBricks();
 }
 
 /**
@@ -78,4 +93,36 @@ function create() {
 function update() {
     game.physics.arcade.collide(ball, paddle);
     paddle.x = game.input.x || game.world.width * 0.5;
+}
+
+/**
+ * Initializes the bricks.
+ */
+function initBricks() {
+    brickInfo = {
+        width: brickWidth,
+        height: brickHeight,
+        count: {
+            row: brickRows,
+            col: brickColumns
+        },
+        offset: {
+            top: brickOffsetTop,
+            left: brickOffsetLeft
+        },
+        padding: brickPadding
+    }
+
+    bricks = game.add.group();
+    for (c = 0; c < brickInfo.count.col; c++) {
+        for (r = 0; r < brickInfo.count.row; r++) {
+            var brickX = (r * (brickInfo.width + brickInfo.padding)) + brickInfo.offset.left;
+            var brickY = (c * (brickInfo.height + brickInfo.padding)) + brickInfo.offset.top;
+            newBrick = game.add.sprite(brickX, brickY, 'brick');
+            game.physics.enable(newBrick, Phaser.Physics.ARCADE);
+            newBrick.body.immovable = true;
+            newBrick.anchor.set(0.5);
+            bricks.add(newBrick);
+        }
+    }
 }
