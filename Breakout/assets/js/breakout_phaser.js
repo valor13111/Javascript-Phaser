@@ -92,6 +92,9 @@ function create() {
  */
 function update() {
     game.physics.arcade.collide(ball, paddle);
+
+    // when the ball collides with a brick, check the function, which removes the brick.
+    game.physics.arcade.collide(ball, bricks, ballHitBrick);
     paddle.x = game.input.x || game.world.width * 0.5;
 }
 
@@ -125,4 +128,14 @@ function initBricks() {
             bricks.add(newBrick);
         }
     }
+}
+
+/**
+ * Destroys the brick once hit with the ball.
+ *
+ * @param ball - ball object
+ * @param brick - brick object
+ */
+function ballHitBrick(ball, brick) {
+    brick.kill();
 }
