@@ -60,6 +60,7 @@ function preload() {
     game.load.image('ball', 'assets/images/ball.png');
     game.load.image('paddle', 'assets/images/paddle.png');
     game.load.image('brick', 'assets/images/brick.png');
+    game.load.spritesheet('ball', 'assets/images/spritesheets/wobble.png', 20, 20);
 }
 
 /**
@@ -75,6 +76,7 @@ function create() {
     // anchor sets the position of the object from top-left of that object, so its set
     // to be in the middle for the ball, and at the bottom middle for paddle
     ball = game.add.sprite(game.world.width * 0.5, game.world.height - 25, 'ball');
+    ball.animations.add('wobble', [0,1,0,2,0,1,0,2,0], 24);
     ball.anchor.set(0.5);
     paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 5, 'paddle');
     paddle.anchor.set(0.5, 1);
@@ -112,7 +114,7 @@ function create() {
  * Executed on every frame.
  */
 function update() {
-    game.physics.arcade.collide(ball, paddle);
+    game.physics.arcade.collide(ball, paddle, ballHitPaddle);
 
     // when the ball collides with a brick, check the function, which removes the brick.
     game.physics.arcade.collide(ball, bricks, ballHitBrick);
@@ -153,12 +155,24 @@ function initBricks() {
 
 /**
  * Destroys the brick once hit with the ball, and updates the score.
+ * A tween smoothly animates properties of an object in the gameworld, such as width
+ * or opacity.  We are adding a tween to make bricks smoothly disappear when hit by
+ * the ball.
  *
  * @param ball - ball object
  * @param brick - brick object
  */
 function ballHitBrick(ball, brick) {
-    brick.kill();
+    var killTween = game.add.tween(brick.scale);
+    killTween.to({
+        x: 0,
+        y: 0
+    }, 200, Phaser.Easing.Linear.None);
+    killTween.onComplete.addOnce(function() {
+        brick.kill();
+    }, this);
+    killTween.start();
+
     score += scoreIncrement;
     scoreText.setText('Points: ' + score);
 
@@ -173,6 +187,16 @@ function ballHitBrick(ball, brick) {
         alert('You won!  Congratulations!');
         location.reload();
     }
+}
+
+/**
+ * Plays the animation 'wobble' when ball bounces off the paddle.
+ *
+ * @param ball
+ * @param paddle
+ */
+function ballHitPaddle(ball, paddle) {
+    ball.animations.play('wobble');
 }
 
 /**
