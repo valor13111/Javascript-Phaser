@@ -16,8 +16,8 @@ var ball;
 var paddle;
 
 // velocities of ball object, positive moves 'down', negative moves 'up'
-var velocityX = 150;
-var velocityY = -150;
+var velocityX = 250;
+var velocityY = -250;
 
 // brick variables
 var bricks;
@@ -50,6 +50,9 @@ var textStyle = {
 var playing = false;
 var startButton;
 
+// sound variables
+var music;
+
 /**
  * Takes care of preloading the assets.  NO_SCALE sets to default size, whereas
  * SHOW_ALL will show the game area while maintaining the original aspect ratio of the screen.
@@ -59,14 +62,18 @@ function preload() {
     game.scale.pageAlignVertically = true;
     game.scale.pageAlignHorizontally = true;
 
-    game.stage.backgroundColor = "#98ee97";
-
     // gives name to the images
     game.load.image('ball', 'assets/images/ball.png');
     game.load.image('paddle', 'assets/images/paddle.png');
     game.load.image('brick', 'assets/images/brick.png');
     game.load.spritesheet('ball', 'assets/images/spritesheets/wobble.png', 20, 20);
     game.load.spritesheet('button', 'assets/images/spritesheets/button.png', 120, 40);
+
+    // gives names to audio
+    game.load.audio('music', 'assets/sound/AllOfUS.mp3');
+
+    // background
+    game.load.image('city', 'assets/images/backgrounds/ruined_city.png');
 }
 
 /**
@@ -75,6 +82,11 @@ function preload() {
 function create() {
     // initializes arcade physics engine
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // background sprite
+    city = game.add.sprite(game.world.width * 0.5, game.world.height * 0.5, 'city');
+    city.width = game.world.width;
+    city.anchor.set(0.5);
 
     // create the sprite by adding it to the game
     // game.world.width or height is the canvas width or height, but could be used for offscreen
@@ -97,6 +109,11 @@ function create() {
 
     startButton = game.add.button(game.world.width * 0.5, game.world.height * 0.5, 'button', startGame, this, 1, 0, 2);
     startButton.anchor.set(0.5);
+
+    // background music
+    music = game.sound.add('music');
+    music.volume = 0.3;
+    music.loop = true;
 
     // enables the ball for physics system, which isn't enabled by default
     // set the velocity of the ball
@@ -232,4 +249,5 @@ function startGame() {
     startButton.destroy();
     ball.body.velocity.set(velocityX, velocityY);
     playing = true;
+    music.play();
 }
