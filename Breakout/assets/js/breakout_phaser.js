@@ -41,6 +41,11 @@ function create() {
     // initializes arcade physics engine
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
+    // create the sprite by adding it to the game
+    // game.world.width or height is the canvas width or height, but could be used for offscreen
+    // interaction if the world is made bigger
+    // anchor sets the position of the object from top-left of that object, so its set
+    // to be in the middle for the ball, and at the bottom middle for paddle
     ball = game.add.sprite(game.world.width * 0.5, game.world.height - 25, 'ball');
     ball.anchor.set(0.5);
     paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 5, 'paddle');
@@ -55,6 +60,16 @@ function create() {
     ball.body.collideWorldBounds = true;
     ball.body.bounce.set(1);
     paddle.body.immovable = true;
+
+    // disables collision with bottom wall,
+    // checks if ball hits bottom bounds, and executes
+    // the function given
+    game.physics.arcade.checkCollision.down = false;
+    ball.checkWorldBounds = true;
+    ball.events.onOutOfBounds.add(function() {
+        alert('Game Over!');
+        location.reload();
+    }, this);
 }
 
 /**
