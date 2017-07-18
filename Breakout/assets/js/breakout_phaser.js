@@ -36,6 +36,16 @@ var scoreText;
 var score = 0;
 var scoreIncrement = 10;
 
+// lives variables
+var livesText;
+var lifeLostText;
+var lives = 3;
+
+var textStyle = {
+    font: '18px Arial',
+    fill: '#6b9add'
+}
+
 /**
  * Takes care of preloading the assets.
  */
@@ -69,10 +79,15 @@ function create() {
     paddle = game.add.sprite(game.world.width * 0.5, game.world.height - 5, 'paddle');
     paddle.anchor.set(0.5, 1);
 
-    scoreText = game.add.text(5, 5, 'Points: 0', {
-        font: '18px Arial',
-        fill: '#69a5e4'
-    });
+    scoreText = game.add.text(5, 5, 'Points: 0', textStyle);
+
+    livesText = game.add.text(game.world.width - 5, 5, 'Lives: ' + lives, textStyle);
+    livesText.anchor.set(1, 0);
+    lifeLostText = game.add.text(game.world.width * 0.5, game.world.height * 0.5, 'Life lost, click to continue', textStyle);
+    lifeLostText.anchor.set(0.5);
+    lifeLostText.visible = false;
+
+
     // enables the ball for physics system, which isn't enabled by default
     // set the velocity of the ball
     // allow for ball to collide with edges of the canvas, and set it to bounce off walls
@@ -88,10 +103,7 @@ function create() {
     // the function given
     game.physics.arcade.checkCollision.down = false;
     ball.checkWorldBounds = true;
-    ball.events.onOutOfBounds.add(function() {
-        alert('Game Over!');
-        location.reload();
-    }, this);
+    ball.events.onOutOfBounds.add(ballLeaveScreen, this);
 
     initBricks();
 }
@@ -159,6 +171,29 @@ function ballHitBrick(ball, brick) {
 
     if (bricks_alive == 0) {
         alert('You won!  Congratulations!');
+        location.reload();
+    }
+}
+
+/**
+ * When the ball leaves the screen, which is the bottom wall, reduce number of lives.
+ * If there are still lives left, set text, and make visible lifeLostText, which allows
+ * user to decide to continue or not.  Reset the ball and paddle, and only invoke the
+ * addOnce function when user clicks a mouse or a key.
+ */
+function ballLeaveScreen() {
+    lives--;
+    if (lives) {
+        livesText.setText('Lives: ' + lives);
+        lifeLostText.visible = true;
+        ball.reset(game.world.width * 0.5, game.world.height - 25);
+        paddle.reset(game.world.width * 0.5, game.world.height - 5);
+        game.input.onDown.addOnce(function() {
+            lifeLostText.visible = false;
+            ball.body.velocity.set(150, -150);
+        }, this);
+    } else {
+        alert('You Lost, Game Over.');
         location.reload();
     }
 }
