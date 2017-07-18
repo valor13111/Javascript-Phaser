@@ -41,10 +41,14 @@ var livesText;
 var lifeLostText;
 var lives = 3;
 
+// text style variable
 var textStyle = {
     font: '18px Arial',
     fill: '#6b9add'
 }
+
+var playing = false;
+var startButton;
 
 /**
  * Takes care of preloading the assets.
@@ -61,6 +65,7 @@ function preload() {
     game.load.image('paddle', 'assets/images/paddle.png');
     game.load.image('brick', 'assets/images/brick.png');
     game.load.spritesheet('ball', 'assets/images/spritesheets/wobble.png', 20, 20);
+    game.load.spritesheet('button', 'assets/images/spritesheets/button.png', 120, 40);
 }
 
 /**
@@ -89,13 +94,14 @@ function create() {
     lifeLostText.anchor.set(0.5);
     lifeLostText.visible = false;
 
+    startButton = game.add.button(game.world.width * 0.5, game.world.height * 0.5, 'button', startGame, this, 1, 0, 2);
+    startButton.anchor.set(0.5);
 
     // enables the ball for physics system, which isn't enabled by default
     // set the velocity of the ball
     // allow for ball to collide with edges of the canvas, and set it to bounce off walls
     game.physics.enable(ball, Phaser.Physics.ARCADE);
     game.physics.enable(paddle, Phaser.Physics.ARCADE);
-    ball.body.velocity.set(velocityX, velocityY);
     ball.body.collideWorldBounds = true;
     ball.body.bounce.set(1);
     paddle.body.immovable = true;
@@ -118,7 +124,9 @@ function update() {
 
     // when the ball collides with a brick, check the function, which removes the brick.
     game.physics.arcade.collide(ball, bricks, ballHitBrick);
-    paddle.x = game.input.x || game.world.width * 0.5;
+    if (playing) {
+        paddle.x = game.input.x || game.world.width * 0.5;
+    }
 }
 
 /**
@@ -164,11 +172,8 @@ function initBricks() {
  */
 function ballHitBrick(ball, brick) {
     var killTween = game.add.tween(brick.scale);
-    killTween.to({
-        x: 0,
-        y: 0
-    }, 200, Phaser.Easing.Linear.None);
-    killTween.onComplete.addOnce(function() {
+    killTween.to({x:0,y:0}, 200, Phaser.Easing.Linear.None);
+    killTween.onComplete.addOnce(function(){
         brick.kill();
     }, this);
     killTween.start();
@@ -176,27 +181,23 @@ function ballHitBrick(ball, brick) {
     score += scoreIncrement;
     scoreText.setText('Points: ' + score);
 
-    var bricks_alive = 0;
-    for (i = 0; i < bricks.children.length; i++) {
-        if (bricks.children[i].alive == true) {
-            bricks_alive++;
-        }
-    }
-
-    if (bricks_alive == 0) {
-        alert('You won!  Congratulations!');
+    if(score === brickInfo.count.row * brickInfo.count.col * scoreIncrement) {
+        alert('You won the game, congratulations!');
         location.reload();
     }
 }
 
 /**
  * Plays the animation 'wobble' when ball bounces off the paddle.
+ * The larger the distance betwen the center of the paddle and the place where
+ * the ball hits, the stronger the bounce either to the left or right.
  *
  * @param ball
  * @param paddle
  */
 function ballHitPaddle(ball, paddle) {
     ball.animations.play('wobble');
+    ball.body.velocity.x = -1 * 5 * (paddle.x - ball.x);
 }
 
 /**
@@ -214,10 +215,20 @@ function ballLeaveScreen() {
         paddle.reset(game.world.width * 0.5, game.world.height - 5);
         game.input.onDown.addOnce(function() {
             lifeLostText.visible = false;
-            ball.body.velocity.set(150, -150);
+            ball.body.velocity.set(velocityX, velocityY);
         }, this);
     } else {
         alert('You Lost, Game Over.');
         location.reload();
     }
+}
+
+/**
+ * When the button is pressed, remove the button, set balls initial velocity,
+ * and set playing variable to true.
+ */
+function startGame() {
+    startButton.destroy();
+    ball.body.velocity.set(velocityX, velocityY);
+    playing = true;
 }
