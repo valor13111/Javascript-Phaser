@@ -39,8 +39,12 @@ function create() {
     ball = game.add.sprite(50, 50, 'ball');
 
     // enables the ball for physics system, which isn't enabled by default
+    // set the velocity of the ball
+    // allow for ball to collide with edges of the canvas, and set it to bounce off walls
     game.physics.enable(ball, Phaser.Physics.ARCADE);
     ball.body.velocity.set(velocityX, velocityY);
+    ball.body.collideWorldBounds = true;
+    ball.body.bounce.set(1);
 }
 
 /**
