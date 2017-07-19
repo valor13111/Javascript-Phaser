@@ -1,6 +1,12 @@
 {
-  "ballStart": {"x": 0.5, "y": -25},
-  "paddleStart": {"x": 0.5, "y": -5},
+  "ballStart": {
+    "x": 0.5,
+    "y": -25
+  },
+  "paddleStart": {
+    "x": 0.5,
+    "y": -5
+  },
   "brickSettings": {
     "brickWidth": 50,
     "brickHeight": 20,
