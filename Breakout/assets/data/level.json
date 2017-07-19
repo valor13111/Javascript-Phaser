@@ -16,6 +16,7 @@
     "brickOffsetLeft": 65,
     "brickPadding": 10,
     "brickScaleX": 1.1,
-    "brickScaleY": 1.1
+    "brickScaleY": 1.1,
+    "brickColor": "#000455"
   }
 }
