@@ -8,15 +8,15 @@
     "y": -5
   },
   "brickSettings": {
-    "brickWidth": 50,
-    "brickHeight": 20,
-    "brickRows": 12,
-    "brickColumns": 5,
+    "brickWidth": 52,
+    "brickHeight": 25,
+    "brickRows": 7,
+    "brickColumns": 10,
     "brickOffsetTop": 50,
-    "brickOffsetLeft": 65,
+    "brickOffsetLeft": 120,
     "brickPadding": 10,
-    "brickScaleX": 1.1,
-    "brickScaleY": 1.1,
+    "brickScaleX": 1.2,
+    "brickScaleY": 1.2,
     "brickColor": "#000455"
   }
 }
